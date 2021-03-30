@@ -41,17 +41,54 @@ def countchat(f_name,sec):
 
     f.close()
     return highlights
-def analyzeh(f_name,seclist):
+def preprocessing(string):
+    
+def analyzeh(f_name,seclist,sec):
     filename=f_name
     f=open(str(f_name)+".txt",'rt',encoding="utf-8")
     lines=f.readlines()
+    word_list={}
+    timecheck=0
+    data=[]
+    list_index=0
+    pasttime=0
     for line in lines:
-        timesec=(int(line[1])*10+int(line[2]))*3600+(int(line[4])*10+int(line[5]))*60+int(line[7])*10+int(line[8])
-        if timesec in seclist:
-            text=line[10:-1]
-            print(text)
         
+        timesec=(int(line[1])*10+int(line[2]))*3600+(int(line[4])*10+int(line[5]))*60+int(line[7])*10+int(line[8])
+        if ((timesec in seclist) or timecheck >0 ) :
+            text=line[11:-1]
+            #print(text)
+            textword=text.split(" ")
+            #print(textword)
+            #for index in textword:
+            for word in textword:
+                if word in word_list:
+                    word_list[word] = word_list[word]+1
+
+                else:
+                    word_list[word] = 1
+            if timesec in seclist:
+                pasttime=timesec
+                timecheck+=1
+            else:
+                if timesec != pasttime:
+                    timecheck+=1
+                    pasttime=timesec
+
+        if timecheck >= sec :
+            print(timesec)
+            word_list=sorted(word_list.items(), key=lambda x:x[1], reverse=True)
+            print(word_list)
+            timecheck=0
+            word_list={}
+            list_index+=1
+
+        
+
+
+    f.close()
+                
 if __name__ == "__main__":
     highlist=countchat(739935451,30)
-    analyzeh(739935451,highlist)
+    analyzeh(739935451,highlist,30)
     
