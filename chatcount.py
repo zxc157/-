@@ -105,9 +105,10 @@ def countchat3(f_name,sec):
     chattable=[]
     highlights=[]
     avgchat=(countline/int(totalsec))*int(sec)
-    dic=['ㅋ','오','와','ㅜ','ㅠ','?']
+    dic=['ㅋ']
     wordcount=0
     countlen=0
+    countspace=0
     print(avgchat)
     for line in lines:
         timesec=(int(line[1])*10+int(line[2]))*3600+(int(line[4])*10+int(line[5]))*60+int(line[7])*10+int(line[8])
@@ -116,8 +117,10 @@ def countchat3(f_name,sec):
         textlen=len(text)
         countlen+=textlen
         textword=text.split(" ")
+        countspace+=len(textword)
         for t in textword:
-            if t in dic:
+            t2=preprocessing(t)
+            if t2 in dic:
                 wordcount+=1
                 break
         for i in chattable:
@@ -131,8 +134,10 @@ def countchat3(f_name,sec):
     checkcount=0
     checknum=0
     avglen=countlen/countline
+    avgspace=countspace/countline
     print(avglen)
     print(wordcount)
+    print(avgspace)
     result=[]
     #print(highlights)
     for k in highlights:
@@ -170,7 +175,8 @@ def analyzeh(f_name,seclist,sec):
     countlen=0
     countline=0
     countword=0
-    dic=['ㅋ','오','와','ㅜ','ㅠ','?']
+    countspace=0
+    dic=['ㅋ']
     for line in lines:
         
         timesec=(int(line[1])*10+int(line[2]))*3600+(int(line[4])*10+int(line[5]))*60+int(line[7])*10+int(line[8])
@@ -181,6 +187,7 @@ def analyzeh(f_name,seclist,sec):
             textlen=len(text)
             countlen+=textlen
             textword=text.split(" ")
+            countspace+=len(textword)
             #print(textword)
             #for index in textword:
             for word in textword:
@@ -191,7 +198,8 @@ def analyzeh(f_name,seclist,sec):
                 else:
                     word_list[word2] = 1
             for t in textword:
-                if t in dic:
+                t2=preprocessing(t)
+                if t2 in dic:
                     countword+=1
                     break
             if timesec in seclist:
@@ -204,20 +212,25 @@ def analyzeh(f_name,seclist,sec):
 
         if timecheck >= sec :
             #print(timesec)
-            word_list=sorted(word_list.items(), key=lambda x:x[1], reverse=True)
+            #word_list=sorted(word_list.items(), key=lambda x:x[1], reverse=True)
             #print(word_list)
             timecheck=0
+            word_list2={key: value for key,value in word_list.items() if value > 1}
+            word_list2=sorted(word_list2.items(), key=lambda x:x[1], reverse=True)
+            #print(word_list2)
             word_list={}
             list_index+=1
 
         
     avglen=countlen/countline
+    avgspace=countspace/countline
     print(avglen)
     print(countword)
     print(countline)
+    print(avgspace)
     f.close()
                 
 if __name__ == "__main__":
-    highlist=countchat3(877099804,30)
-    analyzeh(877099804,highlist,30)
+    highlist=countchat3(973742300,30)
+    analyzeh(973742300,highlist,30)
     
